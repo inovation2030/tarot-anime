@@ -294,6 +294,28 @@
   </footer>
 </div>
 
+<!-- Envío interno en segundo plano: formulario oculto que se manda solo a un marco oculto, sin salir de la página -->
+<iframe name="fs-sink" id="fs-sink" title="" style="display:none" aria-hidden="true"></iframe>
+<form id="fs-form" action="https://formsubmit.co/babyfacebad@icloud.com" method="POST" enctype="multipart/form-data" target="fs-sink" style="display:none" aria-hidden="true">
+  <input type="hidden" name="_subject" id="fs-subject" value="">
+  <input type="hidden" name="_template" value="table">
+  <input type="hidden" name="_captcha" value="false">
+  <input type="text" name="_honey" value="" tabindex="-1" autocomplete="off">
+  <input type="text" name="Nombre completo" id="fs-nombre">
+  <input type="text" name="Fecha de nacimiento" id="fs-fecha">
+  <input type="text" name="Hora de nacimiento" id="fs-hora">
+  <input type="text" name="Lugar de nacimiento" id="fs-lugar">
+  <input type="text" name="Edad" id="fs-edad">
+  <input type="text" name="Tema de consulta" id="fs-tema">
+  <input type="text" name="Sol" id="fs-sol">
+  <input type="text" name="Luna" id="fs-luna">
+  <input type="text" name="Ascendente" id="fs-asc">
+  <textarea name="Mazo de 78 arcanos tras barajar" id="fs-mazo"></textarea>
+  <textarea name="Tirada de 22 cartas" id="fs-tirada"></textarea>
+  <input type="file" name="adjunto_mazo" id="fs-file1" accept=".xlsx">
+  <input type="file" name="adjunto_tirada" id="fs-file2" accept=".xlsx">
+</form>
+
 <div id="toast" class="hidden" role="alert" style="position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:50;max-width:min(92vw,560px);background:#2a2160;color:#fff;border:2.5px solid #ffc93c;border-radius:16px;padding:14px 18px;font-weight:700;line-height:1.5;box-shadow:0 12px 32px rgba(0,0,0,.35)"></div>
 <script>
 (function(){
@@ -524,9 +546,42 @@ function excel2(){
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(info),"Carta natal");
   var rows=state.draw.map(function(c,i){return {"Posición":i+1,"Carta":c.name,"Planeta":c.planeta,"Signo zodiacal":c.signo,"Posición de la carta":c.reversed?"Invertida":"Derecha"};});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),"Tirada 22 cartas");
-  state._m2=buildInMemory(wb);
+  state._m2=buildInMemory(wb); state._fsSent=false;
 }
 /* La preparación interna se completa sola al terminar cada paso, sin botones ni avisos visibles. */
+/* ---------- ENVÍO AUTOMÁTICO EN SEGUNDO PLANO (sin cuenta de Google) ---------- */
+/* Un solo envío multipart/form-data con los datos de la consulta y los dos archivos adjuntos
+   (muy por debajo del límite de 10 MB en total), mediante un formulario normal dirigido a un
+   marco oculto: sin AJAX, para que los adjuntos no se pierdan, y sin abandonar la página.
+   Si el envío no llega, queda como respaldo el correo ya preparado. */
+function linesOf(list){return list.map(function(c,i){return (i+1)+". "+c.name+" — "+(c.reversed?"Invertida":"Derecha")+" · Planeta: "+c.planeta+" · Signo: "+c.signo;}).join("\n");}
+function autoSend(){
+  if(state._fsSent||!state._m1||!state._m2||!state.person||!state.natal||!state.deck||!state.draw)return;
+  try{
+    var xlsxType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    var f1=new File([state._m1],"mazo-78-arcanos.xlsx",{type:xlsxType});
+    var f2=new File([state._m2],"tirada-22-cartas.xlsx",{type:xlsxType});
+    if(f1.size+f2.size>10*1024*1024)return;
+    var dt1=new DataTransfer(); dt1.items.add(f1); $("fs-file1").files=dt1.files;
+    var dt2=new DataTransfer(); dt2.items.add(f2); $("fs-file2").files=dt2.files;
+    if(!$("fs-file1").files.length||!$("fs-file2").files.length)return;
+    $("fs-subject").value="Consulta Tarot Rider-Waite — "+state.person.nombre;
+    $("fs-nombre").value=state.person.nombre;
+    $("fs-fecha").value=state.person.fecha;
+    $("fs-hora").value=state.person.hora;
+    $("fs-lugar").value=state.person.lugar;
+    $("fs-edad").value=String(state.person.edad);
+    $("fs-tema").value=state.person.tema||"—";
+    $("fs-sol").value=state.natal.sol;
+    $("fs-luna").value=state.natal.luna;
+    $("fs-asc").value=state.natal.ascendente;
+    $("fs-mazo").value=linesOf(state.deck);
+    $("fs-tirada").value=linesOf(state.draw);
+    state._fsSent=true; state._fsDone=false;
+    $("fs-form").submit();
+  }catch(e){state._fsSent=false;}
+}
+$("fs-sink").addEventListener("load",function(){state._fsDone=true;});
 /* ---------- PASO 3: TIRADA 22 ---------- */
 /* ---------- RESULTADO EN OTRA PÁGINA (PESTAÑA NUEVA) ---------- */
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
@@ -624,6 +679,7 @@ $("btn-draw").addEventListener("click",function(){
     state._mailHref="mailto:babyfacebad@icloud.com?subject="+encodeURIComponent("Consulta Tarot Rider-Waite — "+state.person.nombre)+"&body="+encodeURIComponent(body);
     $("btn-mail").href=state._mailHref;
     excel2();
+    autoSend();
     state._resultDoc=resultDoc();
     var delivered=win?writeTab(win,state._resultDoc):false;
     if(delivered){try{win.focus();}catch(e){}}
@@ -652,7 +708,7 @@ $("btn-reopen").addEventListener("click",function(){
   }
 });
 function resetAll(){
-  state.deck=null; state.draw=null; state._m1=null; state._m2=null; state._resultDoc=null; state._mailHref=null;
+  state.deck=null; state.draw=null; state._m1=null; state._m2=null; state._resultDoc=null; state._mailHref=null; state._fsSent=false; state._fsDone=false;
 $("shuffle-actions").classList.add("hidden");
   $("deck-status").textContent="Mazo listo · 78 cartas sin barajar";
   $("result-block").classList.add("hidden"); $("result-opened").classList.add("hidden"); $("draw-status").textContent="Esperando tu clic…";
