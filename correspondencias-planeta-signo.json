@@ -1,0 +1,314 @@
+{
+  "El Loco": [
+    "Urano",
+    "Acuario"
+  ],
+  "El Mago": [
+    "Mercurio",
+    "Géminis"
+  ],
+  "La Sacerdotisa": [
+    "La Luna",
+    "Cáncer"
+  ],
+  "La Emperatriz": [
+    "Venus",
+    "Tauro"
+  ],
+  "El Emperador": [
+    "Marte",
+    "Aries"
+  ],
+  "El Sumo Sacerdote": [
+    "Venus",
+    "Tauro"
+  ],
+  "Los Enamorados": [
+    "Mercurio",
+    "Géminis"
+  ],
+  "El Carro": [
+    "La Luna",
+    "Cáncer"
+  ],
+  "La Fuerza": [
+    "El Sol",
+    "Leo"
+  ],
+  "El Ermitaño": [
+    "Mercurio",
+    "Virgo"
+  ],
+  "La Rueda de la Fortuna": [
+    "Júpiter",
+    "Sagitario"
+  ],
+  "La Justicia": [
+    "Venus",
+    "Libra"
+  ],
+  "El Colgado": [
+    "Neptuno",
+    "Piscis"
+  ],
+  "La Muerte": [
+    "Plutón",
+    "Escorpio"
+  ],
+  "La Templanza": [
+    "Júpiter",
+    "Sagitario"
+  ],
+  "El Diablo": [
+    "Saturno",
+    "Capricornio"
+  ],
+  "La Torre": [
+    "Marte",
+    "Aries"
+  ],
+  "La Estrella": [
+    "Urano",
+    "Acuario"
+  ],
+  "La Luna": [
+    "Neptuno",
+    "Piscis"
+  ],
+  "El Sol": [
+    "El Sol",
+    "Leo"
+  ],
+  "El Juicio": [
+    "Plutón",
+    "Escorpio"
+  ],
+  "El Mundo": [
+    "Saturno",
+    "Capricornio"
+  ],
+  "As de Bastos": [
+    "Marte",
+    "Aries"
+  ],
+  "Dos de Bastos": [
+    "Marte",
+    "Aries"
+  ],
+  "Tres de Bastos": [
+    "El Sol",
+    "Aries"
+  ],
+  "Cuatro de Bastos": [
+    "Venus",
+    "Aries"
+  ],
+  "Cinco de Bastos": [
+    "Saturno",
+    "Leo"
+  ],
+  "Seis de Bastos": [
+    "Júpiter",
+    "Leo"
+  ],
+  "Siete de Bastos": [
+    "Marte",
+    "Leo"
+  ],
+  "Ocho de Bastos": [
+    "Mercurio",
+    "Sagitario"
+  ],
+  "Nueve de Bastos": [
+    "La Luna",
+    "Sagitario"
+  ],
+  "Diez de Bastos": [
+    "Saturno",
+    "Sagitario"
+  ],
+  "Sota de Bastos": [
+    "Marte",
+    "Aries"
+  ],
+  "Caballero de Bastos": [
+    "Júpiter",
+    "Sagitario"
+  ],
+  "Reina de Bastos": [
+    "El Sol",
+    "Leo"
+  ],
+  "Rey de Bastos": [
+    "Marte",
+    "Aries"
+  ],
+  "As de Copas": [
+    "La Luna",
+    "Cáncer"
+  ],
+  "Dos de Copas": [
+    "Venus",
+    "Cáncer"
+  ],
+  "Tres de Copas": [
+    "Mercurio",
+    "Cáncer"
+  ],
+  "Cuatro de Copas": [
+    "La Luna",
+    "Cáncer"
+  ],
+  "Cinco de Copas": [
+    "Marte",
+    "Escorpio"
+  ],
+  "Seis de Copas": [
+    "El Sol",
+    "Escorpio"
+  ],
+  "Siete de Copas": [
+    "Venus",
+    "Escorpio"
+  ],
+  "Ocho de Copas": [
+    "Saturno",
+    "Piscis"
+  ],
+  "Nueve de Copas": [
+    "Júpiter",
+    "Piscis"
+  ],
+  "Diez de Copas": [
+    "Marte",
+    "Piscis"
+  ],
+  "Sota de Copas": [
+    "La Luna",
+    "Cáncer"
+  ],
+  "Caballero de Copas": [
+    "Neptuno",
+    "Piscis"
+  ],
+  "Reina de Copas": [
+    "La Luna",
+    "Cáncer"
+  ],
+  "Rey de Copas": [
+    "Plutón",
+    "Escorpio"
+  ],
+  "As de Espadas": [
+    "Mercurio",
+    "Géminis"
+  ],
+  "Dos de Espadas": [
+    "La Luna",
+    "Libra"
+  ],
+  "Tres de Espadas": [
+    "Saturno",
+    "Libra"
+  ],
+  "Cuatro de Espadas": [
+    "Júpiter",
+    "Libra"
+  ],
+  "Cinco de Espadas": [
+    "Venus",
+    "Acuario"
+  ],
+  "Seis de Espadas": [
+    "Mercurio",
+    "Acuario"
+  ],
+  "Siete de Espadas": [
+    "La Luna",
+    "Acuario"
+  ],
+  "Ocho de Espadas": [
+    "Júpiter",
+    "Géminis"
+  ],
+  "Nueve de Espadas": [
+    "Marte",
+    "Géminis"
+  ],
+  "Diez de Espadas": [
+    "El Sol",
+    "Géminis"
+  ],
+  "Sota de Espadas": [
+    "Mercurio",
+    "Géminis"
+  ],
+  "Caballero de Espadas": [
+    "Urano",
+    "Acuario"
+  ],
+  "Reina de Espadas": [
+    "Venus",
+    "Libra"
+  ],
+  "Rey de Espadas": [
+    "Mercurio",
+    "Géminis"
+  ],
+  "As de Oros": [
+    "Venus",
+    "Tauro"
+  ],
+  "Dos de Oros": [
+    "Júpiter",
+    "Capricornio"
+  ],
+  "Tres de Oros": [
+    "Marte",
+    "Capricornio"
+  ],
+  "Cuatro de Oros": [
+    "El Sol",
+    "Capricornio"
+  ],
+  "Cinco de Oros": [
+    "Mercurio",
+    "Tauro"
+  ],
+  "Seis de Oros": [
+    "La Luna",
+    "Tauro"
+  ],
+  "Siete de Oros": [
+    "Saturno",
+    "Tauro"
+  ],
+  "Ocho de Oros": [
+    "El Sol",
+    "Virgo"
+  ],
+  "Nueve de Oros": [
+    "Venus",
+    "Virgo"
+  ],
+  "Diez de Oros": [
+    "Mercurio",
+    "Virgo"
+  ],
+  "Sota de Oros": [
+    "Venus",
+    "Tauro"
+  ],
+  "Caballero de Oros": [
+    "Saturno",
+    "Capricornio"
+  ],
+  "Reina de Oros": [
+    "Venus",
+    "Tauro"
+  ],
+  "Rey de Oros": [
+    "Saturno",
+    "Capricornio"
+  ]
+}
