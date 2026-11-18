@@ -1,0 +1,23 @@
+name: Renombrar a index.html
+
+on:
+  push:
+    paths:
+      - .github/workflows/renombrar-index.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  renombrar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Renombrar archivo a index.html
+        run: |
+          git config user.name "inovation2030"
+          git config user.email "inovation2030@users.noreply.github.com"
+          git mv -f tarot-interactivo-rider-waite.html index.html
+          git commit -m "Syllenza VIP dorado y negro, 3 opciones"
+          git push
