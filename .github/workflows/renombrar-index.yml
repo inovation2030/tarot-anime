@@ -1,0 +1,17 @@
+name: Renombrar tarot a index
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  renombrar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Mover archivo a index.html
+        run: |
+          git config user.name "inovation2030"
+          git config user.email "inovation2030@users.noreply.github.com"
+          git mv tarot-interactivo-rider-waite.html index.html
+          git commit -m "Actualiza imágenes anime épicas de las 78 cartas"
+          git push
